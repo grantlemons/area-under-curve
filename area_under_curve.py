@@ -3,21 +3,22 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.patches import Polygon
 
+print('multiplication must have an asterisk (*) seperating factors')
 func = input('y = ')
-
 bnd_l = int(input('left bound: '))
 bnd_r = int(input('right bound: '))
 s_int = int(input ('sub-intervals: '))
 
 r_area = lambda x, y : abs(x * y)
 t_area = lambda x, y, z : abs(((x+y)/2)*z)
-y = lambda x : eval(parse_func(func))
-
-fig, ax = plt.subplots()
+y = lambda x : eval(parse_func(func), {__builtins__: {}}, {"x": x})
 
 def parse_func(str):
     str = str.replace('ln', 'np.log')
     str = str.replace('^', '**')
+    str = str.replace('sqrt', 'Math.sqrt')
+    # try to remove the possibility of malicious code injection
+    str = str.replace('_', '').replace('\"', '').replace('[', '').replace(']', '')
     str = str.strip()
     return str
 
@@ -40,6 +41,8 @@ def area_trapezoids():
         area += t_area(y(l_x), y(r_x), width)
     return area
 
+# graph functions
+fig, ax = plt.subplots()
 def graph_func():
     nums = np.linspace(bnd_l, bnd_r, (bnd_r-bnd_l)*100)
     ax.plot(nums, y(nums), color='blue')
