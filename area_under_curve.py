@@ -11,12 +11,13 @@ s_int = int(input ('sub-intervals: '))
 
 r_area = lambda x, y : abs(x * y)
 t_area = lambda x, y, z : abs(((x+y)/2)*z)
-y = lambda x : eval(parse_func(func), {__builtins__: {}}, {"x": x})
+y = lambda x : eval(parse_func(func), {__builtins__: {}}, {"x": x, "np": np})
 
 def parse_func(str):
     str = str.replace('ln', 'np.log')
     str = str.replace('^', '**')
-    str = str.replace('sqrt', 'Math.sqrt')
+    str = str.replace('sqrt', 'np.sqrt')
+    str = str.replace('sin', 'np.sin').replace('cos', 'np.cos').replace('tan', 'np.tan')
     # try to remove the possibility of malicious code injection
     str = str.replace('_', '').replace('\"', '').replace('[', '').replace(']', '')
     str = str.strip()
