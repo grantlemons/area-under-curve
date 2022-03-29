@@ -6,7 +6,7 @@ from matplotlib.patches import Polygon
 y = lambda x : eval(func, {__builtins__: {}, "np": np}, {"x": x})
 
 def compile_func(str):
-    str = str.replace('ln', 'np.log')
+    str = str.replace('ln', 'np.log').replace('e', 'math.e')
     str = str.replace('^', '**')
     str = str.replace('sqrt', 'np.sqrt')
     str = str.replace('sin', 'np.sin').replace('cos', 'np.cos').replace('tan', 'np.tan')
@@ -27,8 +27,11 @@ def area_rectangles(graph):
 def area_trapezoids(graph):
     height = 0
     width = (bnd_r-bnd_l)/s_int
+    last_height = y(bnd_l)
     for i in range(0, s_int):
-        height += abs((y(bnd_l+(width*i)) + y(bnd_l+(width*i+1)))/2)
+        right_height = y(bnd_l+(width*(i+1)))
+        height += abs((last_height + right_height)/2)
+        last_height = right_height
         if graph: graph_trapezoid(bnd_l+(width*i), width, y)
     return height*width
 
