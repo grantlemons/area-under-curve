@@ -4,28 +4,35 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.patches import Polygon
 
-y = lambda x : eval(func)
+f = lambda x : eval(func)
 
 # math functions
 def area_rectangles(graph):
-    height = 0
-    width = (bnd_r-bnd_l)/s_int
+    nsum = 0
+    dx = (bnd_r-bnd_l)/s_int
     for i in range(0, s_int):
-        mp = bnd_l+(width/2)+(width*i)
-        height += abs(y(mp))
-        if graph: graph_rectangle(mp-(width/2), width, y(mp))
-    return height*width
+        mp = bnd_l+(dx/2)+(dx*i)
+        nsum += f(mp)
+        if graph: graph_rectangle(mp, dx, f(mp))
+    return nsum*dx
 
 def area_trapezoids(graph):
-    height = 0
-    width = (bnd_r-bnd_l)/s_int
-    last_height = y(bnd_l)
+    nsum = 0
+    dx = (bnd_r-bnd_l)/s_int
+    last_height = f(bnd_l)
     for i in range(0, s_int):
-        right_height = y(bnd_l+(width*(i+1)))
-        height += abs((last_height + right_height)/2)
+        right_height = f(bnd_l+(dx*(i+1)))
+        nsum += (last_height + right_height)/2
         last_height = right_height
-        if graph: graph_trapezoid(bnd_l+(width*i), width, y)
-    return height*width
+        if graph: graph_trapezoid(bnd_l+(dx*i), dx, f)
+    return nsum*dx
+
+def simpsons_rule(graph):
+    #if graph: graph_parabola()
+    x = np.linspace(bnd_l, bnd_r, s_int+1)
+    dx = (bnd_r-bnd_l)/s_int
+    y = f(x)
+    return dx/3 * np.sum(y[0:-1:2] + 4*y[1::2] + y[2::2])
 
 # input function
 def compile_func(str):
@@ -42,11 +49,11 @@ def compile_func(str):
 fig, ax = plt.subplots()
 def graph_func():
     nums = np.linspace(int(bnd_l), int(bnd_r), int((bnd_r-bnd_l)*100))
-    ax.plot(nums, y(nums), color='blue')
+    ax.plot(nums, f(nums), color='blue')
     ax.plot([bnd_l, bnd_r], [0, 0], color='gray', alpha=1)
     
 def graph_rectangle(x, w, h):
-    ax.add_patch(Rectangle((x,0), w, h, alpha=0.2))
+    plt.bar(x, h, width=w, alpha=0.2, color='b')
 
 def graph_trapezoid(x, w, func):
     x_cords = [x, x+w, x+w      , x      ]
@@ -62,6 +69,7 @@ graph = True if input('graph func (y/n): ').lower() == 'y' else False
 
 print('area with rectangles: {:0.3f}'.format(area_rectangles(graph)))
 print('area with trapezoids: {:0.3f}'.format(area_trapezoids(graph)))
+print('area with simpson\'s rule: {:0.3f}'.format(simpsons_rule(graph)))
 graph_func()
 try:
     if graph: plt.show()
