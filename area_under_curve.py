@@ -1,20 +1,12 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.patches import Polygon
 
-y = lambda x : eval(func, {__builtins__: {}, "np": np}, {"x": x})
+y = lambda x : eval(func)
 
-def compile_func(str):
-    str = str.replace('ln', 'np.log').replace('e', 'math.e')
-    str = str.replace('^', '**')
-    str = str.replace('sqrt', 'np.sqrt')
-    str = str.replace('sin', 'np.sin').replace('cos', 'np.cos').replace('tan', 'np.tan')
-    # try to remove the possibility of malicious code injection
-    str = str.replace('_', '').replace('\"', '').replace('[', '').replace(']', '')
-    str = str.strip()
-    return compile(str, 'input', 'eval')
-
+# math functions
 def area_rectangles(graph):
     height = 0
     width = (bnd_r-bnd_l)/s_int
@@ -34,6 +26,17 @@ def area_trapezoids(graph):
         last_height = right_height
         if graph: graph_trapezoid(bnd_l+(width*i), width, y)
     return height*width
+
+# input function
+def compile_func(str):
+    str = str.replace('ln', 'np.log').replace('e', 'math.e')
+    str = str.replace('^', '**')
+    str = str.replace('sqrt', 'np.sqrt')
+    str = str.replace('sin', 'np.sin').replace('cos', 'np.cos').replace('tan', 'np.tan')
+    # try to remove the possibility of malicious code injection
+    str = str.replace('_', '').replace('\"', '').replace('[', '').replace(']', '')
+    str = str.strip()
+    return compile(str, 'input', 'eval')
 
 # graph functions
 fig, ax = plt.subplots()
